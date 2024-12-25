@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Banking System</title>
+    <script>
+        async function fetchAccountDetails() {
+            const accountNumber = document.getElementById('accountNumber').value;
+            const response = await fetch(`backend.php?account_number=${accountNumber}`);
+            const data = await response.json();
+
+            if (data.error) {
+                alert(data.error);
+            } else {
+                document.getElementById('accountDetails').innerText =
+                    `Name: ${data.name}\nBalance: $${data.balance}`;
+            }
+        }
+
+        async function transferFunds() {
+            const fromAccount = document.getElementById('fromAccount').value;
+            const toAccount = document.getElementById('toAccount').value;
+            const amount = document.getElementById('amount').value;
+
+            const response = await fetch('backend.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ fromAccount, toAccount, amount })
+            });
+
+            const data = await response.json();
+            alert(data.message || data.error);
+        }
+    </script>
+</head>
+<body>
+    <h1>Web Banking System</h1>
+
+    <section>
+        <h2>Fetch Account Details</h2>
+        <input type="text" id="accountNumber" placeholder="Account Number">
+        <button onclick="fetchAccountDetails()">Fetch</button>
+        <pre id="accountDetails"></pre>
+    </section>
+
+    <section>
+        <h2>Transfer Funds</h2>
+        <input type="text" id="fromAccount" placeholder="From Account">
+        <input type="text" id="toAccount" placeholder="To Account">
+        <input type="number" id="amount" placeholder="Amount">
+        <button onclick="transferFunds()">Transfer</button>
+    </section>
+</body>
+</html>
